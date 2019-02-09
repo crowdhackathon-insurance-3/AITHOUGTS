@@ -3,7 +3,7 @@ import 'dart:convert';
 
 class WitHandler {
   final String _message_url = "https://api.wit.ai/message?q=";
-  final String _auth = "Bearer " + "XH7LVVFA7BGUQBPLWQSOTXY3WGX7S6VR";
+  final String _auth = "Bearer " + "API_KEY";
   Future sendMsg(String msg) {
     var response = http.get(_message_url + msg,
         // Only accept JSON response
