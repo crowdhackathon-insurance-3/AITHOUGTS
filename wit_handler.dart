@@ -12,7 +12,7 @@ class WitHandler {
     return response;
   }
 
-  String toUser(var response) {
+  String toUser(var response, String witContext) {
     var decoded = json.decode(response);
     Intent intent = Intent.fromResponse(decoded);
     Set<String> entities = Set();
@@ -22,39 +22,53 @@ class WitHandler {
       case "symptom":
         {
           for (String entity in entities) {
-            if (entity != null) return entity;
+            if (entity != null) {
+              witContext = "symptom";
+              switch (entity) {
+                case "back_pain":
+                  {
+                    return "Θέλεις να κλείσω ραντεβού με Ορθοπεδικό;";
+                  }
+                  break;
+                default:
+                  {
+                    return "Θέλεις να κλείσω ραντεβού με Παθολόγο;";
+                  }
+                  break;
+              }
+            }
           }
-          return "no symptom";
-        }
-        break;
-
-      case "change_address":
-        {
-          return "αλλαγή διευθ";
-        }
-        break;
-
-      case "yes_response":
-        {
-          return "ναι";
-        }
-        break;
-
-      case "no_response":
-        {
-          return "οχι";
-        }
-        break;
-
-      case "error":
-        {
           return "Συγνώμη, δεν κατάλαβα";
         }
         break;
-
+      case "change_address":
+        {
+          witContext = "change_address";
+          return "Παρακαλώ συμπληρώστε την διεύθυνση";
+        }
+        break;
+      case "yes_response":
+        {
+          witContext = "yes_response";
+          return "Τα διαθέσιμα ραντεβού είναι τα παρακάτω";
+        }
+        break;
+      case "no_response":
+        {
+          witContext = "no_response";
+          return "Εντάξει";
+        }
+        break;
+      case "error":
+        {
+          witContext = "error";
+          return "Συγνώμη, δεν κατάλαβα";
+        }
+        break;
       default:
         {
-          return "Άλλη περίπτωση";
+          witContext = "error";
+          return "Συγνώμη, δεν κατάλαβα";
         }
         break;
     }
@@ -68,7 +82,7 @@ class Intent {
     this.value = value;
     this.probability = probability;
   }
-  //.containsKey
+
   Intent.fromResponse(var decoded) {
     if (decoded.containsKey('entities') &&
         decoded['entities'].containsKey('intent') &&
