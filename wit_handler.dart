@@ -3,7 +3,7 @@ import 'dart:convert';
 
 class WitHandler {
   final String _message_url = "https://api.wit.ai/message?q=";
-  final String _auth = "Bearer " + "API_KEY";
+  final String _auth = "Bearer " + "XH7LVVFA7BGUQBPLWQSOTXY3WGX7S6VR";
   Future sendMsg(String msg) {
     var response = http.get(_message_url + msg,
         // Only accept JSON response
@@ -20,6 +20,11 @@ class WitHandler {
           return "Απάντηση για χρόνο";
         }
         break;
+
+      case "error":
+        {
+          return "Συγνώμη, δεν κατάλαβα";
+        }
 
       default:
         {
@@ -48,6 +53,9 @@ class Intent {
       print(decoded['entities']['intent'][0]['confidence']);
       this.value = decoded['entities']['intent'][0]['value'].toString();
       this.probability = decoded['entities']['intent'][0]['confidence'].toString();
+    } else {
+      this.value = "error";
+      this.probability = "error";
     }
   }
   String get getValue => value;
