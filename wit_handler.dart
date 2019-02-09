@@ -13,11 +13,36 @@ class WitHandler {
   }
 
   String toUser(var response) {
-    Intent intent = Intent.fromResponse(response);
+    var decoded = json.decode(response);
+    Intent intent = Intent.fromResponse(decoded);
+    Set<String> entities = Set();
+    decoded['entities'].forEach((k, v) => entities.add(k));
+    if (intent.value == null) return "error null";
     switch (intent.value) {
-      case "time":
+      case "symptom":
         {
-          return "Απάντηση για χρόνο";
+          for (String entity in entities) {
+            if (entity != null) return entity;
+          }
+          return "no symptom";
+        }
+        break;
+
+      case "change_address":
+        {
+          return "αλλαγή διευθ";
+        }
+        break;
+
+      case "yes_response":
+        {
+          return "ναι";
+        }
+        break;
+
+      case "no_response":
+        {
+          return "οχι";
         }
         break;
 
@@ -25,6 +50,7 @@ class WitHandler {
         {
           return "Συγνώμη, δεν κατάλαβα";
         }
+        break;
 
       default:
         {
@@ -42,13 +68,13 @@ class Intent {
     this.value = value;
     this.probability = probability;
   }
-  Intent.fromResponse(var responseBody) {
-    var decoded = json.decode(responseBody);
-    if (decoded['entities'] != null &&
-        decoded['entities']['intent'] != null &&
+  //.containsKey
+  Intent.fromResponse(var decoded) {
+    if (decoded.containsKey('entities') &&
+        decoded['entities'].containsKey('intent') &&
         decoded['entities']['intent'][0] != null &&
-        decoded['entities']['intent'][0]['value'] != null &&
-        decoded['entities']['intent'][0]['confidence'] != null) {
+        decoded['entities']['intent'][0].containsKey('value') &&
+        decoded['entities']['intent'][0].containsKey('confidence')) {
       print(decoded['entities']['intent'][0]['value']);
       print(decoded['entities']['intent'][0]['confidence']);
       this.value = decoded['entities']['intent'][0]['value'].toString();
